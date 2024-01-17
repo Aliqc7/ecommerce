@@ -73,7 +73,8 @@ def create_listing(request):
         listing_user = request.user
         listing = Listing (title = title, description = description, \
                            starting_bid = starting_bid, image_url=image_url,\
-                              category= category, listing_user = listing_user)
+                              category= category, listing_user = listing_user,\
+                                is_active = True)
         listing.save()
         return HttpResponseRedirect(reverse('index'))
     return render(request, "auctions/create.html")
