@@ -2,6 +2,21 @@
 
 {% block body %}
     <h2>Active Listings</h2>
+    {% for listing in listings %}
+        <div>
+            <h3><strong>Title</strong>: {{listing.title}}</h3>
+            <p><strong>Description</strong>: {{listing.description}}</p>
+            <p><strong>Current price</strong>: {{listing.current_price}}</p>
+            {% if listing.image_url %}
+                <img width="250px" src="{{listing.image_url}}">
+            {% else %}
+                <p><strong>No image available!</strong></p>
+            {% endif %}
+            <p><strong>Listing user</strong>: {{listing.listing_user}}</p>
+        </div>
 
-    TODO
+    {% empty %}
+        <div>No active listings.</div>
+    {%endfor%}
+
 {% endblock %}
