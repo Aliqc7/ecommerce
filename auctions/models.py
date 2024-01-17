@@ -38,3 +38,10 @@ class Bid(models.Model):
     
     def __str__(self):
         return f"Listing: {self.listing}, Bid: {self.bid}"
+
+class Watchitem(models.Model):
+    user = models.ForeignKey('User', on_delete = models.CASCADE, related_name ="watchlist")
+    listing = models.ForeignKey('Listing', on_delete = models.CASCADE)
+    
+    def __str__(self):
+        return f"User: {self.user} Watched item title: {self.listing.title}"

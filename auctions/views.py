@@ -3,6 +3,7 @@ from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
+from django.contrib.auth.decorators import login_required
 
 from .models import *
 
@@ -81,3 +82,36 @@ def create_listing(request):
         listing.save()
         return HttpResponseRedirect(reverse('index'))
     return render(request, "auctions/create.html")
+
+def show_listing(request, listing_id):
+    listing = Listing.objects.get(pk= listing_id)
+    if request.user.is_authenticated:
+        watch_items = request.user.watchlist.all()
+        watchlist = [item.listing for item in watch_items]
+    else:
+        watchlist =[]
+    return render(request, "auctions/listing.html", {
+        "listing": listing,
+        "watchlist": watchlist
+    })
+
+@login_required
+def watchlist(request, user_id):
+    user = User.objects.get(pk = user_id)
+    
+    if request.method == "POST":
+        action = int(request.POST["action"])
+        listing_id = request.POST["listing_id"]
+        listing = Listing.objects.get(pk = listing_id)
+        if action == 0:
+            watch_item = Watchitem.objects.get(user = request.user, listing = listing)
+            watch_item.delete()
+        else:
+            watch_item = Watchitem(user = user, listing = listing)
+            watch_item.save()
+        return HttpResponseRedirect(reverse('show_listing', args=(listing_id,)))
+
+    return render(request, "auctions/watchlist.html", {
+        "user": user,
+        "watchlist": user.watchlist.all()
+    })
