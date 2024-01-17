@@ -72,7 +72,7 @@ def create_listing(request):
         category = request.POST["category"]
         listing_user = request.user
         listing = Listing (title = title, description = description, \
-                           starting_bid = starting_bid, image_url=image_url,\
+                           starting_bid = starting_bid, current_price = starting_bid, image_url=image_url,\
                               category= category, listing_user = listing_user,\
                                 is_active = True)
         listing.save()
