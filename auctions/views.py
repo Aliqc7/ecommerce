@@ -91,6 +91,7 @@ def create_listing(request):
 
 def show_listing(request, listing_id):
     listing = Listing.objects.get(pk= listing_id)
+    comments = listing.comments.all()
     if request.user.is_authenticated:
         watch_items = request.user.watchlist.all()
         watchlist = [item.listing for item in watch_items]
@@ -98,7 +99,8 @@ def show_listing(request, listing_id):
         watchlist =[]
     return render(request, "auctions/listing.html", {
         "listing": listing,
-        "watchlist": watchlist
+        "watchlist": watchlist,
+        "comments": comments
     })
 
 @login_required
@@ -152,4 +154,16 @@ def close_listing(request, listing_id):
         listing.winner = bidder
         listing.save()
     
+    return HttpResponseRedirect(reverse('show_listing', args=(listing_id, )))
+
+@login_required
+def add_comment(request, listing_id):
+
+    listing = Listing.objects.get(pk = listing_id)
+    user = request.user
+    comment_content = request.POST["comment_content"]
+
+    comment = Comment.objects.create(user = user, listing = listing, text = comment_content)
+    comment.save()
+
     return HttpResponseRedirect(reverse('show_listing', args=(listing_id, )))

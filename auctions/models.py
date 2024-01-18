@@ -16,7 +16,6 @@ class Listing(models.Model):
     listing_user = models.ForeignKey('User', on_delete=models.CASCADE, related_name = "listings")
     is_active = models.BooleanField()
     bid = models.ForeignKey('Bid', on_delete = models.SET_NULL, blank = True, null = True, related_name = "listings")
-    comment = models.ForeignKey('Comment', on_delete=models.CASCADE, blank = True, null = True, related_name = "listings")
     winner = models.ForeignKey(User, on_delete=models.SET_NULL, blank=True, null=True, related_name="won_listings")
     def __str__(self):
         return f"Item: {self.title}, Category: {self.category} Starting bid: {self.starting_bid}"
@@ -29,7 +28,7 @@ class Comment(models.Model):
     listing = models.ForeignKey('Listing', on_delete = models.CASCADE, related_name = "comments")
 
     def __str__(self):
-        return f"User: {self.user}, Listing: {self.listing}, Comment: {self.comment}"
+        return f"User: {self.user}, Listing: {self.listing}, Comment: {self.text}"
     
 
 

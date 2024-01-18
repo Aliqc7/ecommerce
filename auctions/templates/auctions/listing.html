@@ -1,6 +1,8 @@
 {% extends "auctions/layout.html" %}
 
 {% block body %}
+
+
 <div>
     <h3><strong>Title</strong>: {{listing.title}}</h3>
     <p><strong>Description</strong>: {{listing.description}}</p>
@@ -42,18 +44,41 @@
 
     {% endif %}
 
-    <form action="{% url 'place_bid' listing.id %}" method = "post">
+    <form  action="{% url 'place_bid' listing.id %}" method = "post">
         {% csrf_token %}
         
         <input type="submit" value="Bid on listing">
         <input type = "number" name ="bid_amount" placeholder="Bid amount">
     </form>
 
+    <div>
+        <h2> Add a comment...</h2>
+        <form action="{% url 'add_comment' listing.id %}" method = "post">
+            {% csrf_token %}
+            <textarea name = "comment_content"></textarea>
+            <input type= "submit" value = "Submit Comment">
+
+        </form>
+    </div>
+
+    <h2> Comments </h2>
+
     {% endif %}
+
+    {% for comment in comments %}
+
+    <div> {{comment.user}}: {{comment.text}} </div>
+
+    {% empty %}
+    
+    <div> no comments... </div>
+
+    {% endfor %}    
 
     {% if message%}
     <p>{{message}}</p>
     {% endif %}
+
 
     {% if listing.listing_user.id == request.user.id %}
         <form action="{% url 'close_listing' listing.id %}" method = "post">
@@ -62,7 +87,8 @@
 
         </form>
     {% endif %}
-
+    
+    
     {% else %}
     {% if request.user == listing.winner%}
     <p> Congratulations! You have won this auction!</p>
