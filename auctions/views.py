@@ -115,3 +115,22 @@ def watchlist(request, user_id):
         "user": user,
         "watchlist": user.watchlist.all()
     })
+
+def place_bid(request, listing_id):
+    user = request.user
+    listing = Listing.objects.get(pk = listing_id)
+    bid_amount = int(request.POST["bid_amount"])
+    if (listing.bid is None and bid_amount >= listing.starting_bid) or (bid_amount > listing.current_price):
+        bid = Bid(listing = listing, bidder = user, amount = bid_amount)
+        bid.save()
+        listing.current_price = bid_amount
+        listing.bid = bid
+        listing.save()
+        message = "Your bid is successfully placed!"
+    else:
+        message = "Your bid is too low!"
+        
+    return render (request, "auctions/listing.html", {
+        "listing": listing,
+        "message": message
+    })

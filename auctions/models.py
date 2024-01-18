@@ -15,6 +15,7 @@ class Listing(models.Model):
     category = models.CharField(max_length=50, blank = True)
     listing_user = models.ForeignKey('User', on_delete=models.CASCADE, related_name = "listings")
     is_active = models.BooleanField()
+    bid = models.ForeignKey('Bid', on_delete=models.CASCADE, blank = True, null = True, related_name = "listings")
     comment = models.ForeignKey('Comment', on_delete=models.CASCADE, blank = True, null = True, related_name = "listings")
 
     def __str__(self):
@@ -34,10 +35,11 @@ class Comment(models.Model):
 
 class Bid(models.Model):
     listing = models.ForeignKey('Listing', on_delete = models.CASCADE, related_name = "bids")
-    bid = models.IntegerField()
+    bidder = models.ForeignKey('User', on_delete = models.CASCADE, related_name = "placed_bids")
+    amount = models.IntegerField()
     
     def __str__(self):
-        return f"Listing: {self.listing}, Bid: {self.bid}"
+        return f"Listing: {self.listing}, Bid: {self.amount}"
 
 class Watchitem(models.Model):
     user = models.ForeignKey('User', on_delete = models.CASCADE, related_name ="watchlist")

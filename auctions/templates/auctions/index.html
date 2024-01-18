@@ -6,7 +6,11 @@
         <div>
             <h3><strong>Title</strong>: {{listing.title}}</h3>
             <p><strong>Description</strong>: {{listing.description}}</p>
-            <p><strong>Current price</strong>: {{listing.current_price}}</p>
+            {% if listing.bid is None %}
+            <p>Be the first one to bid on this item (<strong>Starting bid</strong>: {{listing.starting_bid}})</p>
+            {% else %}
+            <p><strong>Current price (Highest bid): {{listing.current_price}}</strong></p>
+            {% endif %}
             {% if listing.image_url %}
                 <img width="250px" src="{{listing.image_url}}">
             {% else %}
