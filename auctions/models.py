@@ -12,7 +12,7 @@ class Listing(models.Model):
     starting_bid = models.IntegerField()
     current_price = models.IntegerField()
     image_url = models.URLField(max_length=500, blank = True)
-    category = models.CharField(max_length=50, blank = True)
+    category = models.CharField(max_length=50, blank = True, default=None)
     listing_user = models.ForeignKey('User', on_delete=models.CASCADE, related_name = "listings")
     is_active = models.BooleanField()
     bid = models.ForeignKey('Bid', on_delete = models.SET_NULL, blank = True, null = True, related_name = "listings")

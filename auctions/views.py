@@ -167,3 +167,18 @@ def add_comment(request, listing_id):
     comment.save()
 
     return HttpResponseRedirect(reverse('show_listing', args=(listing_id, )))
+
+def categories(request):
+    listings = Listing.objects.all()
+    categories = [item.category for item in listings]
+
+    return render (request, "auctions/categories.html", {
+        "categories": categories
+    })
+
+def category(request, category):
+    listings = Listing.objects.filter(category = category, is_active = True)
+    return render(request, "auctions/category.html", { 
+        "listings": listings,
+        "category": category
+    })
