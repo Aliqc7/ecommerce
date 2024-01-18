@@ -4,7 +4,9 @@
     <h2>Active Listings</h2>
     {% for listing in listings %}
         <div>
-            <h3><strong>Title</strong>: {{listing.title}}</h3>
+            <a href="{% url 'show_listing' listing.id %}">
+                <h3><strong>Title</strong>: {{listing.title}}</h3>
+            </a>
             <p><strong>Description</strong>: {{listing.description}}</p>
             {% if listing.bid is None %}
             <p>Be the first one to bid on this item (<strong>Starting bid</strong>: {{listing.starting_bid}})</p>
