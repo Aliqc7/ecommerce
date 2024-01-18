@@ -14,6 +14,12 @@ def index(request):
         "listings": listings
     })
 
+def closed_auctions(request):
+    listings = Listing.objects.filter(is_active = False).all()
+    return render(request, "auctions/closed_auctions.html", {
+        "listings": listings
+    })
+
 
 def login_view(request):
     if request.method == "POST":
@@ -134,3 +140,16 @@ def place_bid(request, listing_id):
         "listing": listing,
         "message": message
     })
+
+@login_required
+def close_listing(request, listing_id):
+    listing = Listing.objects.get(pk = listing_id)
+    listing.is_active = False
+    listing.save()
+    bid = listing.bid
+    if bid:
+        bidder = bid.bidder
+        listing.winner = bidder
+        listing.save()
+    
+    return HttpResponseRedirect(reverse('show_listing', args=(listing_id, )))

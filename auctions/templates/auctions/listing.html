@@ -4,16 +4,19 @@
 <div>
     <h3><strong>Title</strong>: {{listing.title}}</h3>
     <p><strong>Description</strong>: {{listing.description}}</p>
-    {% if listing.bid is None %}
-    <p>Be the first one to bid on this item (<strong>Starting bid</strong>: {{listing.starting_bid}})</p>
-    {% else %}
-    <p><strong>Current price (Highest bid): {{listing.current_price}}</strong></p>
-    {% endif %}
 
     {% if listing.image_url %}
         <img width="250px" src="{{listing.image_url}}">
     {% else %}
         <p><strong>No image available!</strong></p>
+    {% endif %}
+
+    {% if listing.is_active == True %}
+
+    {% if listing.bid is None %}
+    <p>Be the first one to bid on this item (<strong>Starting bid</strong>: {{listing.starting_bid}})</p>
+    {% else %}
+    <p><strong>Current price (Highest bid): {{listing.current_price}}</strong></p>
     {% endif %}
     <p><strong>Listing user</strong>: {{listing.listing_user}}</p>
 </div>
@@ -50,7 +53,23 @@
 
     {% if message%}
     <p>{{message}}</p>
-    {%endif%}
+    {% endif %}
+
+    {% if listing.listing_user.id == request.user.id %}
+        <form action="{% url 'close_listing' listing.id %}" method = "post">
+            {% csrf_token %}
+            <input type="submit" value="Close listing">
+
+        </form>
+    {% endif %}
+
+    {% else %}
+    {% if request.user == listing.winner%}
+    <p> Congratulations! You have won this auction!</p>
+    {% else %}
+    <p> Listing closed</p>
+    {% endif %}
+    {% endif %}
 
 </div>
 {% endblock %}
