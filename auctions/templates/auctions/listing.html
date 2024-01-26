@@ -1,101 +1,95 @@
 {% extends "auctions/layout.html" %}
 
 {% block body %}
+    <div class="container mt-4 pb-4">
+        <div class="row">
+            <div class="col-md-6">
+                <h3 id="listing-title" class="listing-title mb-4"><strong>Title</strong>: {{listing.title}}</h3>
+                <p id="listing-description" class="listing-description mb-4"><strong>Description</strong>: {{listing.description}}</p>
 
+                {% if listing.image_url %}
+                    <img id="listing-image" class="listing-image mb-4" width="250px" src="{{listing.image_url}}" alt="Listing Image">
+                {% else %}
+                    <p id="listing-no-image" class="listing-no-image mb-4"><strong>No image available!</strong></p>
+                {% endif %}
 
-<div>
-    <h3><strong>Title</strong>: {{listing.title}}</h3>
-    <p><strong>Description</strong>: {{listing.description}}</p>
+                {% if listing.is_active == True %}
+                
+                {% if listing.listing_user.id == request.user.id %}
+                <form id="close-listing-form" action="{% url 'close_listing' listing.id %}" method="post">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger mb-4">Close Listing</button>
+                </form>
+                {% endif %} 
 
-    {% if listing.image_url %}
-        <img width="250px" src="{{listing.image_url}}">
-    {% else %}
-        <p><strong>No image available!</strong></p>
-    {% endif %}
-
-    {% if listing.is_active == True %}
-
-    {% if listing.bid is None %}
-    <p>Be the first one to bid on this item (<strong>Starting bid</strong>: {{listing.starting_bid}})</p>
-    {% else %}
-    <p><strong>Current price (Highest bid): {{listing.current_price}}</strong></p>
-    {% endif %}
-    <p><strong>Listing user</strong>: {{listing.listing_user}}</p>
-</div>
-<div>
-    {% if request.user.is_authenticated %}
-    {% if listing not in  watchlist %}
-
-    <form action="{% url 'watchlist' request.user.id%}" method="post">
-        {% csrf_token %}
-        <input type="hidden" name = "listing_id" value="{{listing.id}}">
-        <input type= "hidden" name = "action" value= 1>
-        <input type="submit" value="Add to watchlist">
-
-    </form>
-
-    {% else %}
-    <form action="{% url 'watchlist' request.user.id%}" method="post">
-        {% csrf_token %}
-        <input type="hidden" name = "listing_id" value="{{listing.id}}">
-        <input type= "hidden" name = "action" value= 0>
-        <input type="submit" value="Remove from watchlist">
-    </form>    
-
-    {% endif %}
-
-    <form  action="{% url 'place_bid' listing.id %}" method = "post">
-        {% csrf_token %}
-        
-        <input type="submit" value="Bid on listing">
-        <input type = "number" name ="bid_amount" placeholder="Bid amount">
-    </form>
-
-    <div>
-        <h2> Add a comment...</h2>
-        <form action="{% url 'add_comment' listing.id %}" method = "post">
-            {% csrf_token %}
-            <textarea name = "comment_content"></textarea>
-            <input type= "submit" value = "Submit Comment">
-
-        </form>
+                    {% if listing.bid is None %}
+                        <p id="listing-bid-info" class="listing-bid-info mb-4">Be the first one to bid on this item (<strong>Starting bid</strong>: {{listing.starting_bid}})</p>
+                    {% else %}
+                        <p id="listing-bid-info" class="listing-bid-info mb-4"><strong>Current price (Highest bid): {{listing.current_price}}</strong></p>
+                    {% endif %}
+                    <p id="listing-listing-user" class="listing-listing-user mb-4"><strong>Listing user</strong>: {{listing.listing_user}}</p>
+                {% endif %}
+                
+            </div>
+            <div class="col-md-6">
+                <div id="user-actions" class="user-actions mb-4 ml-md-4">
+                    {% if listing.is_active == True %}
+                    {% if request.user.is_authenticated %}
+                    <form id="bid-form" action="{% url 'place_bid' listing.id %}" method="post" class="form-inline">
+                        {% csrf_token %}
+                        <div class="form-group mb-2">
+                            <input type="number" name="bid_amount" placeholder="Bid amount" class="form-control mr-2">
+                        </div>                
+                        <div class="form-group mb-2">
+                            <button type="submit" class="btn btn-success">Bid on Listing</button>
+                        </div>
+                    </form>
+                        <div id="add-comment-section" class="add-comment-section mb-4">
+                            <h2 id="add-comment-title">Add a comment...</h2>
+                            <form id="comment-form" action="{% url 'add_comment' listing.id %}" method="post">
+                                {% csrf_token %}
+                                <textarea id="comment-content" name="comment_content" class="form-control mb-2"></textarea>
+                                <button type="submit" class="btn btn-primary">Submit Comment</button>
+                            </form>
+                        </div>
+                        <h2 id="comments-title" class="mb-4">Comments</h2>
+                        {% for comment in comments %}
+                            <div class="comment mb-4">
+                                {{comment.user}}: {{comment.text}}
+                            </div>
+                        {% empty %}
+                            <div id="no-comments" class="no-comments mb-4">No comments...</div>
+                        {% endfor %}
+                        {% if message %}
+                            <p id="message" class="message mb-4">{{message}}</p>
+                        {% endif %}
+                        {% if listing not in watchlist %}
+                        <form id="watchlist-form" action="{% url 'watchlist' request.user.id%}" method="post">
+                            {% csrf_token %}
+                            <input type="hidden" name="listing_id" value="{{listing.id}}">
+                            <input type="hidden" name="action" value=1>
+                            <button type="submit" class="btn btn-primary mb-4">Add to Watchlist</button>
+                        </form>
+                    {% else %}
+                        <form id="watchlist-form" action="{% url 'watchlist' request.user.id%}" method="post">
+                            {% csrf_token %}
+                            <input type="hidden" name="listing_id" value="{{listing.id}}">
+                            <input type="hidden" name="action" value=0>
+                            <button type="submit" class="btn btn-primary mb-4">Remove from Watchlist</button>
+                        </form>
+                    {% endif %}
+                    {% endif %}
+                    {% endif %}
+                </div>
+            </div>
+        </div>
     </div>
-
-    <h2> Comments </h2>
-
-    {% endif %}
-
-    {% for comment in comments %}
-
-    <div> {{comment.user}}: {{comment.text}} </div>
-
-    {% empty %}
-    
-    <div> no comments... </div>
-
-    {% endfor %}    
-
-    {% if message%}
-    <p>{{message}}</p>
-    {% endif %}
-
-
-    {% if listing.listing_user.id == request.user.id %}
-        <form action="{% url 'close_listing' listing.id %}" method = "post">
-            {% csrf_token %}
-            <input type="submit" value="Close listing">
-
-        </form>
-    {% endif %}
-    
-    
+    {% if listing.is_active == True %}
     {% else %}
-    {% if request.user == listing.winner%}
-    <p> Congratulations! You have won this auction!</p>
-    {% else %}
-    <p> Listing closed</p>
+        {% if request.user == listing.winner %}
+            <p id="listing-congrats" class="listing-congrats mb-4">Congratulations! You have won this auction!</p>
+        {% else %}
+            <p id="listing-closed" class="listing-closed mb-4">Listing closed</p>
+        {% endif %}
     {% endif %}
-    {% endif %}
-
-</div>
 {% endblock %}

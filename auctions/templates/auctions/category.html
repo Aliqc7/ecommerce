@@ -1,32 +1,32 @@
 {% extends "auctions/layout.html" %}
 
 {% block body %}
-    {% if category != "None" %}
-    <h2>Listings for category: {{category}}</h2>
-    {% else %}
-    <h2>Uncategorised Listings</h2>
-    {% endif %}
-    {% for listing in listings %}
-        <div>
-            <a href="{% url 'show_listing' listing.id %}">
-                <h3><strong>Title</strong>: {{listing.title}}</h3>
-            </a>
-            <p><strong>Description</strong>: {{listing.description}}</p>
-            {% if listing.bid is None %}
-            <p>Be the first one to bid on this item (<strong>Starting bid</strong>: {{listing.starting_bid}})</p>
-            {% else %}
-            <p><strong>Current price (Highest bid): {{listing.current_price}}</strong></p>
-            {% endif %}
-            {% if listing.image_url %}
-                <img width="250px" src="{{listing.image_url}}">
-            {% else %}
-                <p><strong>No image available!</strong></p>
-            {% endif %}
-            <p><strong>Listing user</strong>: {{listing.listing_user}}</p>
-        </div>
-
-    {% empty %}
-        <div>No active listings.</div>
-    {%endfor%}
-
+    <div id="category-listings-container" class="container mt-4">
+        {% if category != "None" %}
+            <h2 id="category-title" class="mb-4">Listings for category: {{category}}</h2>
+        {% else %}
+            <h2 id="uncategorized-title" class="mb-4">Uncategorized Listings</h2>
+        {% endif %}
+        {% for listing in listings %}
+            <div class="listing-item mb-4">
+                <a href="{% url 'show_listing' listing.id %}" class="listing-link">
+                    <h3 class="listing-title"><strong>Title</strong>: {{listing.title}}</h3>
+                </a>
+                <p class="listing-description"><strong>Description</strong>: {{listing.description}}</p>
+                {% if listing.bid is None %}
+                    <p class="listing-bid-info">Be the first one to bid on this item (<strong>Starting bid</strong>: {{listing.starting_bid}})</p>
+                {% else %}
+                    <p class="listing-bid-info"><strong>Current price (Highest bid): {{listing.current_price}}</strong></p>
+                {% endif %}
+                {% if listing.image_url %}
+                    <img class="listing-image" width="250px" src="{{listing.image_url}}" alt="Listing Image">
+                {% else %}
+                    <p class="listing-no-image"><strong>No image available!</strong></p>
+                {% endif %}
+                <p class="listing-listing-user"><strong>Listing user</strong>: {{listing.listing_user}}</p>
+            </div>
+        {% empty %}
+            <div id="no-listings-message" class="text-muted">No listings available for this category.</div>
+        {% endfor %}
+    </div>
 {% endblock %}

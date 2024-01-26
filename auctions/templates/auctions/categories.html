@@ -1,15 +1,19 @@
 {% extends "auctions/layout.html" %}
 
 {% block body %}
-
-<h1>Categories</h1>
-
-{% for category in categories %}
-{% if category %}
-<div><a href="{% url 'category' category %}">{{category}}</a></div>
-{% endif%}
-{% endfor %}
-{% if "" in categories %}
-<div><a href="{% url 'category' None %}">Uncategorised</a></div>
-{% endif %}
+    <div id="categories-container" class="container mt-4">
+        <h1 id="categories-title" class="mb-4">Categories</h1>
+        {% for category in categories %}
+            {% if category %}
+                <div class="category-item mb-2">
+                    <a href="{% url 'category' category %}" class="category-link">{{category}}</a>
+                </div>
+            {% endif %}
+        {% endfor %}
+        {% if "" in categories %}
+            <div id="uncategorized-link" class="category-item mb-2">
+                <a href="{% url 'category' None %}" class="category-link">Uncategorized</a>
+            </div>
+        {% endif %}
+    </div>
 {% endblock %}
